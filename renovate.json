@@ -1,0 +1,5 @@
+{
+  "extends": [":timezone(Asia/Seoul)", ":label(renovate)", "config:base"],
+  "enabledManagers": ["npm"],
+  "platformAutomerge": true
+}

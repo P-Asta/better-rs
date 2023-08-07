@@ -6,19 +6,22 @@ use quote::*;
 use syn::{parse_macro_input, ItemImpl, ImplItem, Type::{Path, self}, ReturnType};
 
 #[proc_macro_attribute]
-pub fn new(_: TokenStream, item: TokenStream) -> TokenStream {
+pub fn new(asdf: TokenStream, item: TokenStream) -> TokenStream {
     
     let input = parse_macro_input!(item as ItemImpl);
     let items: &ImplItem = input.items.index(0);
     
     let mut attr = quote!();
     let mut content = quote!();
-    
-    let name = if let Path(tp) = &*input.self_ty{
-        Ok(tp.path.segments.last().unwrap().ident.clone())
-    }else{ Err(()) };
+    let mut name;
 
-    let name = name.unwrap();
+    if let Path(tp) = &*input.self_ty{
+        name = if let Some(o) = tp.path.segments.last(){
+            format_ident!("{}", o.ident.clone().to_string())
+        }else{ format_ident!("wtf") }
+    }else { name = format_ident!("wtf") }
+    
+
 
     if let ImplItem::Fn(d) = items{
         let c = &d.block.stmts;
@@ -27,8 +30,9 @@ pub fn new(_: TokenStream, item: TokenStream) -> TokenStream {
         content = quote!(#( #c )*);
         attr = quote!(#( #a, )*)
     }
-    println!("\naaaaaaaaaaaa: {}\n", attr);
+    
     let f = quote!(
+        #input
         #[allow(non_snake_case)]
         fn #name () -> #name {
             #content

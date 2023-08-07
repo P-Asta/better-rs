@@ -1,26 +1,37 @@
 extern crate proc_macro;
-use proc_macro::TokenStream;
+use std::ops::Index;
+
+use proc_macro::{TokenStream, Ident};
 use quote::*;
-use regex::Regex;
-use syn::{parse_macro_input, ItemImpl};
+use syn::{parse_macro_input, ItemImpl, ImplItem, Type::{Path, self}, ReturnType};
+
 #[proc_macro_attribute]
 pub fn new(_: TokenStream, item: TokenStream) -> TokenStream {
-    let item_string = item.to_string();
     
     let input = parse_macro_input!(item as ItemImpl);
-    let name = format_ident!("{}", item_string.split(" ").nth(1).unwrap());
-    // impl Asdf { fn new(a : isize, b : isize) -> Self { Self { a : a, b } } }
-    // let reg = Regex::new(&format!("fn new\\((?<a>.*)\\) -> (Self)?({name})?")).unwrap();
-    // let attr = &reg.captures(&item_string).unwrap()["a"];
-    // let code = &reg.captures(&item_string).unwrap()["c"];
+    let items: &ImplItem = input.items.index(0);
     
-    // dbg!(match input.items.get(0).unwrap() {
-    //     _ => {},
-    // });
-    println!("name: {name:?}");
+    let mut attr = quote!();
+    let mut content = quote!();
+    
+    let name = if let Path(tp) = &*input.self_ty{
+        Ok(tp.path.segments.last().unwrap().ident.clone())
+    }else{ Err(()) };
+
+    let name = name.unwrap();
+
+    if let ImplItem::Fn(d) = items{
+        let c = &d.block.stmts;
+        let a = &d.attrs;
+
+        content = quote!(#( #c )*);
+        attr = quote!(#( #a, )*)
+    }
+    println!("\naaaaaaaaaaaa: {}\n", attr);
     let f = quote!(
-        fn #name() -> &'static str {
-            "hello world"
+        #[allow(non_snake_case)]
+        fn #name () -> #name {
+            #content
         }
     );
     TokenStream::from(f)

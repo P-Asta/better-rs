@@ -1,0 +1,13 @@
+[package]
+name = "better"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.32"
+regex = "1.9.3"
+syn = { version = "2.0.28", features = ["proc-macro", "full", "extra-traits", "visit-mut", "fold", "visit", "test"] }

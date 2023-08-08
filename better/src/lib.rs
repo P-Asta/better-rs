@@ -30,6 +30,7 @@ pub fn new(asdf: TokenStream, item: TokenStream) -> TokenStream {
         content = quote!(#( #c )*);
         attr = quote!(#( #a, )*)
     }
+    println!("attr: {attr}");
     
     let f = quote!(
         #input

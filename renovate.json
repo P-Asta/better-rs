@@ -1,5 +1,5 @@
 {
   "extends": [":timezone(Asia/Seoul)", ":label(renovate)", "config:base"],
-  "enabledManagers": ["npm"],
+  "enabledManagers": ["cargo", "rustup"],
   "platformAutomerge": true
 }

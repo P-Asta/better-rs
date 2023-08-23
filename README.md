@@ -1,5 +1,5 @@
 # better-rs
-
+goal: rustcoed make better
 ## new constructor
 
 ```rs

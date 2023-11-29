@@ -9,16 +9,13 @@ struct Asdf{
 #[better::new]
 impl Asdf {
     fn new(a: isize, b: isize) -> Asdf{
-        Asdf { a: a + 1, b: b + 1 }
-    }
-    fn a(&self) -> isize{
-        self.a
+        Asdf { a: a, b: b + 100 }
     }
 }
 
 
 fn main() {
-    let a = Asdf();
+    let a = Asdf(1, 3);
     println!("{:?}", a);
     
 }

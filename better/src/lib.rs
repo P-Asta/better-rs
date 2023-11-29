@@ -25,17 +25,17 @@ pub fn new(asdf: TokenStream, item: TokenStream) -> TokenStream {
 
     if let ImplItem::Fn(d) = items{
         let c = &d.block.stmts;
-        let a = &d.attrs;
+        let a = &d.sig.inputs;
 
         content = quote!(#( #c )*);
-        attr = quote!(#( #a, )*)
+        attr = quote!(#a)
+        // attr = quote!(#( #a, )*)
     }
-    println!("attr: {attr}");
     
     let f = quote!(
         #input
         #[allow(non_snake_case)]
-        fn #name () -> #name {
+        fn #name (#attr) -> #name {
             #content
         }
     );

@@ -1,19 +1,19 @@
 extern crate proc_macro;
 use std::ops::Index;
 
-use proc_macro::{TokenStream, Ident};
+use proc_macro::TokenStream;
 use quote::*;
-use syn::{parse_macro_input, ItemImpl, ImplItem, Type::{Path, self}, ReturnType};
+use syn::{parse_macro_input, ItemImpl, ImplItem, Type::Path};
 
 #[proc_macro_attribute]
-pub fn new(asdf: TokenStream, item: TokenStream) -> TokenStream {
+pub fn new(_: TokenStream, item: TokenStream) -> TokenStream {
     
     let input = parse_macro_input!(item as ItemImpl);
     let items: &ImplItem = input.items.index(0);
     
     let mut attr = quote!();
     let mut content = quote!();
-    let mut name;
+    let name;
 
     if let Path(tp) = &*input.self_ty{
         name = if let Some(o) = tp.path.segments.last(){
@@ -40,4 +40,49 @@ pub fn new(asdf: TokenStream, item: TokenStream) -> TokenStream {
         }
     );
     TokenStream::from(f)
+}
+
+trait Calc{
+    type Item;
+    fn sum(&self) -> Self::Item;
+    fn mul(&self) -> Self::Item;
+}
+
+macro_rules! calc_maker {
+    ($($t: tt) *) => {
+        $(
+            impl Calc for Vec<$t>{
+                type Item = $t;
+                fn sum(&self) -> $t {
+                    let mut res = 0;
+                    for i in self.clone(){
+                        res += i
+                    }
+                    res
+                }
+                fn mul(&self) -> $t {
+                    let mut res = 0;
+                    for i in self.clone(){
+                        res *= i
+                    }
+                    res
+                }
+            }
+        )*
+    };
+}
+calc_maker!{
+    isize
+    i8
+    i16
+    i32
+    i64
+    i128
+
+    usize
+    u8
+    u16
+    u32
+    u64
+    u128
 }

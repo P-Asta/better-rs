@@ -23,7 +23,7 @@ impl Asdf {
 
 
 fn main() {
-    let a = Asdf();
+    let a = Asdf(10, 20);
     println!("{:?}", a);
     
 }
